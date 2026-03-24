@@ -1,17 +1,17 @@
-import ConditionsPreview from "@/components/ConditionsPreview";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import NewsPreview from "@/components/NewsPreview";
-import QuickCards from "@/components/QuickCards";
-import Image from "next/image";
+import HealthTips from "@/components/Healthtips";
+import HeroSection from "@/components/Hero";
+import JoinCTA from "@/components/Joincta";
+import LatestNews from "@/components/Latestnews";
+import UpcomingMeetings from "@/components/Upcomingmeetings";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <>
-      <Hero />
-      <QuickCards />
-      <ConditionsPreview />
-      <NewsPreview />
-    </>
+    <main className="bg-[#f8fafb]">
+      <HeroSection />
+      <UpcomingMeetings />
+      <HealthTips />
+      <LatestNews />
+      <JoinCTA />
+    </main>
   );
 }

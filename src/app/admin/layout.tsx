@@ -9,8 +9,8 @@ export default async function AdminLayout({
   const session = await getServerSession();
 
   if (!session) {
-    redirect("/admin-login"); // өөр route
+    redirect("/admin-login");
   }
 
-  return <div className="flex min-h-screen">{children}</div>;
+  return <div className="w-full bg-[#f5f7fa] min-h-screen">{children}</div>;
 }

@@ -29,7 +29,11 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "src/ui/ui.jsx",
+    "src/components/Healthtips.jsx",
+    "src/components/Latestnews.jsx",
+    "src/components/Upcomingmeetings.jsx"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,126 +1,190 @@
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const fakeNews = [
-  {
-    id: 1,
-    title: "Pediatric Orthopedic Research Advances in 2026",
-    date: "2026-02-20",
-    category: "Research",
-    summary:
-      "New clinical studies show improved outcomes in early scoliosis treatment using minimally invasive techniques.",
-  },
-  {
-    id: 2,
-    title: "International Pediatric Conference Announced",
-    date: "2026-02-10",
-    category: "Events",
-    summary:
-      "Global specialists will gather to discuss innovations in pediatric musculoskeletal care.",
-  },
-  {
-    id: 3,
-    title: "New Guidelines for Pediatric Fracture Management",
-    date: "2026-01-28",
-    category: "Guidelines",
-    summary:
-      "Updated recommendations aim to improve recovery and reduce complications in children.",
-  },
+type News = {
+  _id: string;
+  title: string;
+  category: string;
+  year: string;
+  date: string;
+  location?: string;
+  tags: string[];
+  excerpt: string;
+  highlight: boolean;
+};
+
+const CATEGORIES = [
+  "Бүгд",
+  "Хурал",
+  "Сургалт",
+  "Судалгаа",
+  "Олон улс",
+  "Нийгмийн",
 ];
 
-export default function NewsPage() {
+const categoryColor: Record<string, string> = {
+  Хурал: "bg-blue-50 text-blue-600",
+  Сургалт: "bg-teal-50 text-teal-600",
+  Судалгаа: "bg-purple-50 text-purple-600",
+  "Олон улс": "bg-amber-50 text-amber-600",
+  Нийгмийн: "bg-green-50 text-green-600",
+  Бусад: "bg-gray-100 text-gray-500",
+};
+
+export default function InformationPage() {
+  const [items, setItems] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("Бүгд");
+
+  useEffect(() => {
+    setLoading(true);
+    const params =
+      activeTab !== "Бүгд" ? `?category=${encodeURIComponent(activeTab)}` : "";
+    fetch(`/api/news${params}`)
+      .then((r) => r.json())
+      .then((data) => setItems(Array.isArray(data) ? data : []))
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
+  }, [activeTab]);
+
+  const years = [...new Set(items.map((a) => a.year))].sort((a, b) => +b - +a);
+
   return (
-    <div className="bg-white">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-blue-600 text-white py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 mb-4 text-teal-100 text-sm">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-            </svg>
-            <span>News & Updates</span>
+    <main className="bg-[#f8fafb] min-h-screen">
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-5 h-px bg-teal-400" />
+            <span className="text-teal-500 text-xs font-bold uppercase tracking-widest">
+              POSM
+            </span>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">News</h1>
-          <p className="text-teal-100 mt-3 text-lg">
-            Stay informed with the latest developments in pediatric orthopedic
-            care
+          <h1
+            className="text-3xl font-extrabold text-slate-800"
+            style={{ fontFamily: "'Georgia', serif" }}
+          >
+            Мэдээ
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">
+            Хурал, сургалт, судалгаа болон нийгмийн ажлын мэдээлэл
           </p>
+          <div className="flex flex-wrap gap-2 mt-6">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveTab(cat)}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all border ${
+                  activeTab === cat
+                    ? "bg-teal-500 text-white border-teal-500 shadow-sm"
+                    : "bg-white text-slate-500 border-gray-200 hover:border-teal-300 hover:text-teal-600"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* News Grid */}
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <div className="space-y-6">
-          {fakeNews.map((news, index) => (
-            <Link
-              key={news.id}
-              href={`/news/${news.id}`}
-              className="group block"
-            >
-              <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 bg-white hover:border-teal-300">
-                <div className="p-8">
-                  {/* Top row: Date and Category */}
-                  <div className="flex items-center justify-between mb-4">
-                    <time className="text-sm font-medium text-gray-500">
-                      {new Date(news.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                    <span className="inline-block px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full border border-teal-200">
-                      {news.category}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h2 className="text-2xl font-bold text-gray-900 group-hover:text-teal-600 transition-colors mb-3 line-clamp-2">
-                    {news.title}
-                  </h2>
-
-                  {/* Summary */}
-                  <p className="text-gray-600 leading-relaxed mb-6">
-                    {news.summary}
-                  </p>
-
-                  {/* CTA */}
-                  <div className="flex items-center text-teal-600 font-semibold group-hover:gap-2 gap-1 transition-all">
-                    <span>Read full article</span>
-                    <svg
-                      className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Bottom accent bar */}
-                <div className="h-1 bg-gradient-to-r from-teal-400 to-blue-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {loading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl border border-gray-100 h-52 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-24 text-slate-400">
+            <p className="text-4xl mb-3">📭</p>
+            <p className="text-sm">Мэдээлэл байхгүй байна</p>
+          </div>
+        ) : (
+          years.map((year) => (
+            <div key={year} className="mb-14">
+              <div className="flex items-center gap-4 mb-7">
+                <span className="text-5xl font-extrabold text-slate-100 leading-none select-none">
+                  {year}
+                </span>
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-slate-300 font-medium">
+                  {items.filter((a) => a.year === year).length} үйл ажиллагаа
+                </span>
               </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Section Divider */}
-        <div className="mt-16 pt-16 border-t border-gray-200">
-          <p className="text-center text-gray-500 text-sm">
-            Looking for older articles?{" "}
-            <Link
-              href="/news/archive"
-              className="text-teal-600 font-semibold hover:text-teal-700"
-            >
-              View archive
-            </Link>
-          </p>
-        </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {items
+                  .filter((a) => a.year === year)
+                  .map((act) => (
+                    <Link
+                      key={act._id}
+                      href={`/news/${act._id}`}
+                      className={`group bg-white rounded-2xl border shadow-sm overflow-hidden
+                      hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col
+                      ${act.highlight ? "border-teal-200 ring-1 ring-teal-100" : "border-gray-100"}`}
+                    >
+                      {(act as any).imageUrl ? (
+                        <div className="h-36 overflow-hidden">
+                          <img
+                            src={(act as any).imageUrl}
+                            alt={act.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className={`h-1 w-full transition-all duration-300 ${
+                            act.highlight
+                              ? "bg-gradient-to-r from-teal-400 to-teal-500"
+                              : "bg-slate-100 group-hover:bg-teal-200"
+                          }`}
+                        />
+                      )}
+                      <div className="p-5 flex flex-col flex-1">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span
+                            className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor[act.category] ?? categoryColor["Бусад"]}`}
+                          >
+                            {act.category}
+                          </span>
+                          {act.highlight && (
+                            <span className="text-xs text-teal-500 font-semibold">
+                              ★
+                            </span>
+                          )}
+                        </div>
+                        <h2 className="text-sm font-bold text-slate-800 leading-snug mb-2 group-hover:text-teal-600 transition-colors line-clamp-2">
+                          {act.title}
+                        </h2>
+                        <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 flex-1">
+                          {act.excerpt}
+                        </p>
+                        <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 text-xs text-slate-300 min-w-0">
+                            <span className="shrink-0">{act.date}</span>
+                            {act.location && (
+                              <>
+                                <span>·</span>
+                                <span className="truncate">
+                                  📍 {act.location}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          <span className="text-xs text-teal-500 font-semibold group-hover:underline whitespace-nowrap shrink-0">
+                            Дэлгэрэнгүй →
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+            </div>
+          ))
+        )}
       </div>
-    </div>
+    </main>
   );
 }

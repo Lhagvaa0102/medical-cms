@@ -11,14 +11,14 @@ export default function Footer() {
           {/* Organization Info */}
           <div>
             <h3 className="text-sm font-semibold text-teal-400 tracking-widest uppercase mb-4">
-              About POSNA
+              About POSM
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
               Committed to excellence in pediatric orthopedic care, education,
               and research.
             </p>
             <a
-              href="https://www.google.com/maps/place/%D0%93%D1%8D%D0%BC%D1%82%D1%8D%D0%BB+%D0%A1%D0%BE%D0%B3%D0%BE%D0%B3+%D0%A1%D1%83%D0%B4%D0%BB%D0%B0%D0%BB%D1%8B%D0%BD+%D2%AE%D0%BD%D0%B4%D0%B5%D1%81%D0%BD%D0%B8%D0%B9+%D0%A2%D3%A9%D0%B2/@47.9199085,106.8202991,5027m"
+              href="https://www.google.com/maps/place/%D0%93%D1%8D%D0%BC%D1%82%D1%8D%D0%BB+%D0%A1%D0%BE%D0%https://www.google.com/maps/place/%D0%93%D1%8D%D0%BC%D1%82%D1%8D%D0%BB+%D0%A1%D0%BE%D0%B3%D0%BE%D0%B3+%D0%A1%D1%83%D0%B4%D0%BB%D0%B0%D0%BB%D1%8B%D0%BD+%D2%AE%D0%BD%D0%B4%D1%8D%D1%81%D0%BD%D0%B8%D0%B9+%D0%A2%D3%A9%D0%B2/@47.9199085,106.8558276,628m/data=!3m2!1e3!4b1!4m6!3m5!1s0x5d9692dbcf2c28bd:0x67f1ac453e14d01!8m2!3d47.9199085!4d106.8584079!16s%2Fg%2F1tlvp86c?entry=ttu&g_ep=EgoyMDI2MDIyMy4wIKXMDSoASAFQAw%3D%3DB3%D0%BE%D0%B3+%D0%A1%D1%83%D0%B4%D0%BB%D0%B0%D0%BB%D1%8B%D0%BD+%D2%AE%D0%BD%D0%B4%D0%B5%D1%81%D0%BD%D0%B8%D0%B9+%D0%A2%D3%A9%D0%B2/@47.9199085,106.8202991,5027m"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-teal-400 hover:text-teal-300 transition-colors font-medium"
@@ -83,7 +83,7 @@ export default function Footer() {
                   href="mailto:info@posna.org"
                   className="text-sm text-teal-400 hover:text-teal-300 transition-colors font-medium"
                 >
-                  info@posna.org
+                  mgltrauma.ped@gmail.com
                 </a>
               </div>
               <div>
@@ -108,8 +108,8 @@ export default function Footer() {
             {/* Copyright */}
             <div className="text-sm text-gray-500">
               <p>
-                © {currentYear} Pediatric Orthopedic Society of North America.
-                All rights reserved.
+                © {currentYear} Pediatric Orthopedic Society of Mongolia. All
+                rights reserved.
               </p>
             </div>
 
