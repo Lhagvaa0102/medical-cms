@@ -21,7 +21,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-4 group">
             <div className="w-20 h-20 flex items-center justify-center">
               <Image
-                src="/Logo.jpg"
+                src="/Logo.png"
                 alt="POSM Logo"
                 width={128}
                 height={128}
