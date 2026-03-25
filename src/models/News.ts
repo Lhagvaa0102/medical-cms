@@ -19,6 +19,7 @@ export interface INews {
   highlight: boolean;
   published: boolean;
   imageUrl?: string;
+  images?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +41,7 @@ const NewsSchema = new Schema<INews>(
     highlight: { type: Boolean, default: false },
     published: { type: Boolean, default: false },
     imageUrl: { type: String, default: "" },
+    images: [{ type: String }],
   },
   { timestamps: true },
 );

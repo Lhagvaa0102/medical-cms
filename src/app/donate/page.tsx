@@ -2,8 +2,14 @@
 import { useState } from "react";
 
 const BANK_ACCOUNTS = [
-  { bank: "Хаан банк", account: "5000****78", name: "ПОСМ ТББ" },
-  { bank: "Голомт банк", account: "1234****90", name: "ПОСМ ТББ" },
+  {
+    bank: "Төрийн банк",
+    account: "860034100901882633",
+    name: "Монголын хүүхдийн гэмтэл согогийн унагалдай нийгэмлэг",
+    note: "хандив",
+    color: "from-blue-600 to-blue-700",
+    logo: "🏛️",
+  },
 ];
 
 function formatMNT(n: number) {
@@ -29,10 +35,7 @@ export default function DonatePage() {
   }
 
   return (
-    <div
-      className="min-h-screen bg-slate-50"
-      style={{ fontFamily: "'Noto Sans', sans-serif" }}
-    >
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
       <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 text-white">
         <div className="max-w-4xl mx-auto px-6 py-16">
@@ -73,47 +76,6 @@ export default function DonatePage() {
           {/* Left — Amount + Why */}
           <div className="md:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-5">
-                Хандивын хэмжээ
-              </h2>
-              <div className="relative">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Дүн оруулах..."
-                  value={
-                    customAmount
-                      ? Number(customAmount).toLocaleString("mn-MN")
-                      : ""
-                  }
-                  onChange={handleCustom}
-                  className={`w-full border-2 rounded-xl px-4 py-4 text-lg font-bold pr-10 focus:outline-none focus:ring-2 focus:ring-teal-400 transition ${
-                    customAmount
-                      ? "border-teal-400 bg-teal-50 text-teal-800"
-                      : "border-slate-200 text-slate-500"
-                  }`}
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">
-                  ₮
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 mt-2">
-                Хандивлах дүнгээ оруулна уу
-              </p>
-
-              {finalAmount > 0 && (
-                <div className="mt-4 bg-teal-50 border border-teal-100 rounded-xl px-4 py-3 flex items-center justify-between">
-                  <span className="text-xs text-teal-600 font-medium">
-                    Нийт дүн
-                  </span>
-                  <span className="text-lg font-bold text-teal-700">
-                    {formatMNT(finalAmount)}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">
                 Хандив юунд зарцуулагдах вэ?
               </h3>
@@ -134,17 +96,17 @@ export default function DonatePage() {
           </div>
 
           {/* Right — Bank transfer */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 space-y-4">
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-              <div className="border-b border-slate-100 px-8 py-4 flex items-center gap-2">
+              <div className="border-b border-slate-100 px-6 py-4 flex items-center gap-2">
                 <span>🏦</span>
                 <span className="text-sm font-semibold text-slate-700">
                   Дансаар шилжүүлэх
                 </span>
               </div>
 
-              <div className="p-8 space-y-4">
-                <p className="text-sm text-slate-500 mb-6">
+              <div className="p-6 space-y-5">
+                <p className="text-sm text-slate-500">
                   Доорх дансанд шилжүүлэг хийж, гүйлгээний утга дээр өөрийн
                   нэрийг бичнэ үү.
                 </p>
@@ -152,108 +114,143 @@ export default function DonatePage() {
                 {BANK_ACCOUNTS.map((acc) => (
                   <div
                     key={acc.bank}
-                    className="border border-slate-200 rounded-2xl p-5 hover:border-teal-300 transition-colors"
+                    className="rounded-2xl border border-slate-200 overflow-hidden"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-slate-800">
+                    {/* Bank header */}
+                    <div
+                      className={`bg-gradient-to-r ${acc.color} px-5 py-3 flex items-center gap-2`}
+                    >
+                      <span className="text-lg">{acc.logo}</span>
+                      <span className="text-white font-bold text-sm">
                         {acc.bank}
                       </span>
-                      <span className="text-xs text-slate-400 bg-slate-100 rounded-full px-3 py-1">
-                        {acc.name}
-                      </span>
                     </div>
-                    <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
-                      <span className="font-mono text-lg font-bold text-slate-800 tracking-wider">
-                        {acc.account}
-                      </span>
-                      <button
-                        onClick={() =>
-                          copyToClipboard(
-                            acc.account.replace(/\*/g, "0"),
-                            acc.bank,
-                          )
-                        }
-                        className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
-                          copied === acc.bank
-                            ? "bg-teal-100 text-teal-700"
-                            : "bg-white border border-slate-200 text-slate-500 hover:border-teal-400 hover:text-teal-600"
-                        }`}
-                      >
-                        {copied === acc.bank ? (
-                          <>
-                            <svg
-                              className="w-3.5 h-3.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            Хуулагдлаа
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-3.5 h-3.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                              />
-                            </svg>
-                            Хуулах
-                          </>
-                        )}
-                      </button>
+
+                    <div className="p-5 space-y-3">
+                      {/* Account holder */}
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">
+                          Данс эзэмшигч
+                        </p>
+                        <p className="text-sm font-semibold text-slate-700">
+                          {acc.name}
+                        </p>
+                      </div>
+
+                      {/* Account number */}
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">
+                          Дансны дугаар
+                        </p>
+                        <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
+                          <span className="font-mono text-base font-bold text-slate-800 tracking-wider">
+                            {acc.account}
+                          </span>
+                          <button
+                            onClick={() =>
+                              copyToClipboard(
+                                acc.account,
+                                `${acc.bank}-account`,
+                              )
+                            }
+                            className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
+                              copied === `${acc.bank}-account`
+                                ? "bg-teal-100 text-teal-700"
+                                : "bg-white border border-slate-200 text-slate-500 hover:border-teal-400 hover:text-teal-600"
+                            }`}
+                          >
+                            {copied === `${acc.bank}-account` ? (
+                              <>
+                                <svg
+                                  className="w-3.5 h-3.5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>{" "}
+                                Хуулагдлаа
+                              </>
+                            ) : (
+                              <>
+                                <svg
+                                  className="w-3.5 h-3.5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                  />
+                                </svg>{" "}
+                                Хуулах
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Transfer note */}
+                      <div>
+                        <p className="text-xs text-slate-400 mb-1">
+                          Гүйлгээний утга
+                        </p>
+                        <div className="flex items-center justify-between bg-amber-50 rounded-xl px-4 py-3 border border-amber-100">
+                          <span className="text-sm font-semibold text-amber-800">
+                            {finalAmount > 0
+                              ? `өөрийн нэр хандив `
+                              : "өөрийн нэр хандив"}
+                          </span>
+                          <button
+                            onClick={() =>
+                              copyToClipboard("хандив", `${acc.bank}-note`)
+                            }
+                            className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
+                              copied === `${acc.bank}-note`
+                                ? "bg-amber-200 text-amber-800"
+                                : "bg-white border border-amber-200 text-amber-600 hover:border-amber-400"
+                            }`}
+                          >
+                            {copied === `${acc.bank}-note`
+                              ? "✓ Хуулагдлаа"
+                              : "Хуулах"}
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-1.5">
+                          💡 Жишээ:{" "}
+                          <span className="text-slate-600 font-medium">
+                            "Батбаяр Дорж хандив"
+                          </span>
+                        </p>
+                      </div>
+
+                      {/* Amount if entered */}
+                      {finalAmount > 0 && (
+                        <div className="bg-teal-50 border border-teal-100 rounded-xl px-4 py-3 flex items-center justify-between">
+                          <span className="text-xs text-teal-600 font-medium">
+                            Шилжүүлэх дүн
+                          </span>
+                          <span className="text-lg font-bold text-teal-700">
+                            {formatMNT(finalAmount)}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
-
-                {/* Transfer note */}
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-                  <div className="flex gap-3">
-                    <span className="text-amber-500 text-lg flex-shrink-0">
-                      💡
-                    </span>
-                    <div>
-                      <p className="text-xs font-semibold text-amber-800 mb-1">
-                        Гүйлгээний утга
-                      </p>
-                      <p className="text-xs text-amber-700 leading-relaxed">
-                        Гүйлгээний утга хэсэгт{" "}
-                        <strong>өөрийн нэр + "POSM хандив"</strong> гэж бичнэ
-                        үү. Жишээ: "Батбаяр Дорж POSM хандив"
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Amount reminder */}
-                {finalAmount > 0 && (
-                  <div className="bg-teal-50 border border-teal-100 rounded-xl px-4 py-3 flex items-center justify-between">
-                    <span className="text-xs text-teal-600 font-medium">
-                      Шилжүүлэх дүн
-                    </span>
-                    <span className="text-lg font-bold text-teal-700">
-                      {formatMNT(finalAmount)}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
             {/* Thank you */}
-            <div className="mt-6 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-start gap-4">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-start gap-4">
               <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center flex-shrink-0">
                 <span className="text-xl">🙏</span>
               </div>

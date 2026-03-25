@@ -30,10 +30,10 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "src/ui/ui.jsx",
+    "src/ui/ui.tsx",
     "src/components/Healthtips.jsx",
-    "src/components/Latestnews.jsx",
-    "src/components/Upcomingmeetings.jsx"
+    "src/components/Latestnews.tsx",
+    "src/components/Upcomingmeetings.tsx"
   ],
   "exclude": ["node_modules"]
 }

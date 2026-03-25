@@ -22,6 +22,26 @@ const statusLabels = {
   ongoing: { label: "Явагдаж байна", color: "bg-blue-100 text-blue-700" },
 };
 
+const MONTHS = [
+  "1-р",
+  "2-р",
+  "3-р",
+  "4-р",
+  "5-р",
+  "6-р",
+  "7-р",
+  "8-р",
+  "9-р",
+  "10-р",
+  "11-р",
+  "12-р",
+];
+
+function fmtDate(d: string) {
+  const dt = new Date(d);
+  return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]}ын ${dt.getUTCDate()}`;
+}
+
 function CalendarIcon() {
   return (
     <svg
@@ -85,7 +105,6 @@ export default function MeetingPage() {
   const [loading, setLoading] = useState(true);
   const [activeYear, setActiveYear] = useState("Бүгд");
 
-  // ── Fetch from API ────────────────────────────────────────
   useEffect(() => {
     fetch("/api/meetings")
       .then((r) => r.json())
@@ -94,23 +113,23 @@ export default function MeetingPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // ── Derived ───────────────────────────────────────────────
+  const upcoming = meetings.filter((m) => m.status === "upcoming");
+
   const years = [
     "Бүгд",
     ...Array.from(
-      new Set(meetings.map((m) => new Date(m.date).getFullYear().toString())),
+      new Set(
+        meetings.map((m) => new Date(m.date).getUTCFullYear().toString()),
+      ),
     ).sort((a, b) => +b - +a),
   ];
 
   const filtered = meetings.filter((m) =>
     activeYear === "Бүгд"
       ? true
-      : new Date(m.date).getFullYear().toString() === activeYear,
+      : new Date(m.date).getUTCFullYear().toString() === activeYear,
   );
 
-  const upcoming = meetings.filter((m) => m.status === "upcoming");
-
-  // ── Skeleton ──────────────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f8fafb]">
@@ -129,11 +148,10 @@ export default function MeetingPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafb]">
-      {/* ── Hero banner ── */}
+      {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-600 to-blue-700 text-white">
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/5 pointer-events-none" />
         <div className="absolute -bottom-12 -left-12 w-56 h-56 rounded-full bg-teal-500/20 pointer-events-none" />
-
         <div className="relative max-w-6xl mx-auto px-4 py-14">
           <div className="flex items-center gap-2 text-teal-200 text-xs mb-6">
             <Link href="/" className="hover:text-white transition">
@@ -142,7 +160,6 @@ export default function MeetingPage() {
             <span>›</span>
             <span className="text-white font-medium">Хурал зөвөлгөөн</span>
           </div>
-
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
@@ -171,7 +188,6 @@ export default function MeetingPage() {
             </div>
           </div>
         </div>
-
         <div
           className="h-6 bg-[#f8fafb]"
           style={{ clipPath: "ellipse(60% 100% at 50% 100%)" }}
@@ -179,7 +195,7 @@ export default function MeetingPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-16">
-        {/* ── Upcoming highlight ── */}
+        {/* Upcoming highlight — horizontal scroll carousel */}
         {upcoming.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center gap-2 mb-4">
@@ -188,52 +204,58 @@ export default function MeetingPage() {
                 Удахгүй болох хурал
               </h2>
             </div>
-            {upcoming.map((conf) => (
-              <div
-                key={conf._id}
-                className="relative overflow-hidden bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6"
-              >
-                <div className="absolute right-0 top-0 w-64 h-64 rounded-full bg-white/5 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-                <div className="flex-1 relative">
-                  <span className="inline-block mb-3 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-sm">
-                    🗓{" "}
-                    {new Date(conf.date).toLocaleDateString("mn-MN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <h3 className="text-xl md:text-2xl font-bold leading-tight mb-2">
-                    {conf.title}
-                  </h3>
-                  <p className="text-teal-100 text-sm">{conf.description}</p>
-                  <div className="flex flex-wrap gap-3 mt-4 text-sm text-teal-100">
-                    <span className="flex items-center gap-1.5">
-                      <PinIcon />
-                      {conf.location}
+            <div
+              className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {upcoming.map((conf) => (
+                <div
+                  key={conf._id}
+                  className="relative overflow-hidden bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6 flex-shrink-0 snap-start"
+                  style={{ minWidth: "min(100%, 640px)" }}
+                >
+                  <div className="absolute right-0 top-0 w-64 h-64 rounded-full bg-white/5 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+                  <div className="flex-1 relative">
+                    <span className="inline-block mb-3 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-sm">
+                      🗓 {fmtDate(conf.date)}
                     </span>
+                    <h3 className="text-xl md:text-2xl font-bold leading-tight mb-2">
+                      {conf.title}
+                    </h3>
+                    <p className="text-teal-100 text-sm">{conf.description}</p>
+                    <div className="flex flex-wrap gap-3 mt-4 text-sm text-teal-100">
+                      <span className="flex items-center gap-1.5">
+                        <PinIcon />
+                        {conf.location}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3 flex-shrink-0">
+                    <Link
+                      href={`/meeting/${conf._id}`}
+                      className="px-6 py-2.5 border border-white/40 text-white text-sm font-semibold rounded-full hover:bg-white/10 transition text-center"
+                    >
+                      Дэлгэрэнгүй
+                    </Link>
                   </div>
                 </div>
-                <div className="flex flex-col gap-3 flex-shrink-0">
-                  <Link
-                    href="/join"
-                    className="px-6 py-2.5 bg-white text-teal-700 text-sm font-bold rounded-full hover:bg-teal-50 transition text-center"
-                  >
-                    Бүртгүүлэх
-                  </Link>
-                  <Link
-                    href={`/meeting/${conf._id}`}
-                    className="px-6 py-2.5 border border-white/40 text-white text-sm font-semibold rounded-full hover:bg-white/10 transition text-center"
-                  >
-                    Дэлгэрэнгүй
-                  </Link>
-                </div>
+              ))}
+            </div>
+            {/* Scroll dots */}
+            {upcoming.length > 1 && (
+              <div className="flex justify-center gap-1.5 mt-3">
+                {upcoming.map((_, i) => (
+                  <span
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-teal-300 opacity-60"
+                  />
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
 
-        {/* ── Filter bar ── */}
+        {/* Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Хурлын жагсаалт</h2>
@@ -241,24 +263,26 @@ export default function MeetingPage() {
               {filtered.length} хурал олдлоо
             </p>
           </div>
-          <div className="flex bg-white border border-gray-200 rounded-full p-1 gap-1">
-            {years.map((y) => (
-              <button
-                key={y}
-                onClick={() => setActiveYear(y)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                  activeYear === y
-                    ? "bg-teal-600 text-white shadow-sm"
-                    : "text-gray-500 hover:text-teal-600"
-                }`}
-              >
-                {y}
-              </button>
-            ))}
-          </div>
+          {years.length > 1 && (
+            <div className="flex bg-white border border-gray-200 rounded-full p-1 gap-1">
+              {years.map((y) => (
+                <button
+                  key={y}
+                  onClick={() => setActiveYear(y)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    activeYear === y
+                      ? "bg-teal-600 text-white shadow-sm"
+                      : "text-gray-500 hover:text-teal-600"
+                  }`}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* ── Cards ── */}
+        {/* Cards — upcoming байхгүй */}
         {filtered.length === 0 ? (
           <div className="text-center py-20 text-gray-400">
             <svg
@@ -275,7 +299,7 @@ export default function MeetingPage() {
               />
             </svg>
             <p className="font-semibold text-gray-500">
-              Энэ жилд хурал бүртгэгдээгүй байна
+              Хурал бүртгэгдээгүй байна
             </p>
           </div>
         ) : (
@@ -288,20 +312,15 @@ export default function MeetingPage() {
                   key={conf._id}
                   className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden flex flex-col"
                 >
-                  <div
-                    className={`h-1 w-full ${conf.status === "upcoming" ? "bg-gradient-to-r from-teal-400 to-blue-500" : "bg-gradient-to-r from-gray-200 to-gray-300"}`}
-                  />
-
+                  <div className="h-1 w-full bg-gradient-to-r from-gray-200 to-gray-300" />
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <span className="flex-shrink-0 w-12 h-12 rounded-xl bg-teal-50 text-teal-700 flex flex-col items-center justify-center leading-tight">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-teal-400">
-                          {new Date(conf.date).toLocaleDateString("mn-MN", {
-                            month: "short",
-                          })}
+                        <span className="text-[10px] font-bold text-teal-400">
+                          {MONTHS[new Date(conf.date).getUTCMonth()]}
                         </span>
                         <span className="text-lg font-extrabold">
-                          {new Date(conf.date).getDate()}
+                          {new Date(conf.date).getUTCDate()}
                         </span>
                       </span>
                       <div className="flex-1 min-w-0">
@@ -327,19 +346,12 @@ export default function MeetingPage() {
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <CalendarIcon />
                         <span>
-                          {new Date(conf.date).toLocaleDateString("mn-MN", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {fmtDate(conf.date)}
                           {multiDay && (
                             <>
                               {" "}
-                              —{" "}
-                              {new Date(conf.endDate!).toLocaleDateString(
-                                "mn-MN",
-                                { month: "long", day: "numeric" },
-                              )}
+                              — {MONTHS[new Date(conf.endDate!).getUTCMonth()]}
+                              ын {new Date(conf.endDate!).getUTCDate()}
                             </>
                           )}
                         </span>
@@ -374,11 +386,7 @@ export default function MeetingPage() {
                       href={`/meeting/${conf._id}`}
                       className="mt-auto flex items-center justify-between px-5 py-3 rounded-xl bg-gray-50 text-gray-700 text-sm font-semibold hover:bg-teal-600 hover:text-white transition-colors group/btn"
                     >
-                      <span>
-                        {conf.status === "upcoming"
-                          ? "Бүртгэл & дэлгэрэнгүй"
-                          : "Хөтөлбөр харах"}
-                      </span>
+                      <span>Хөтөлбөр харах</span>
                       <svg
                         className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
                         fill="none"

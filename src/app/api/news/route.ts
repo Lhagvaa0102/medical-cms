@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
     if (highlight === "1") filter.highlight = true;
 
     const news = await News.find(filter).sort({ date: -1 }).limit(limit).lean();
-
     return NextResponse.json(news);
   } catch (err) {
     console.error("[NEWS GET]", err);
@@ -46,6 +45,7 @@ export async function POST(req: NextRequest) {
       highlight,
       published,
       imageUrl,
+      images,
     } = body;
 
     if (!title || !excerpt || !content || !date) {
@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
       highlight: highlight ?? false,
       published: published ?? false,
       imageUrl: imageUrl ?? "",
+      images: images ?? [], // ← олон зураг
     });
 
     return NextResponse.json(news, { status: 201 });

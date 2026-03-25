@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import { News } from "@/models/News";
+import NewsGallery from "@/components/NewsGallery";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -25,22 +26,24 @@ async function getNews(id: string) {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const activity = await getNews(id);
-  if (!activity) return { title: "Олдсонгүй | POSM" };
-  return {
-    title: `${activity.title} | POSM`,
-    description: activity.excerpt,
-  };
+  const news = await getNews(id);
+  if (!news) return { title: "Олдсонгүй | POSM" };
+  return { title: `${news.title} | POSM`, description: news.excerpt };
 }
 
 export default async function NewsDetailPage({ params }: Props) {
   const { id } = await params;
-  const activity = await getNews(id);
-  if (!activity) notFound();
+  const news = await getNews(id);
+  if (!news) notFound();
+
+  const allImages: string[] = [
+    ...(news.imageUrl ? [news.imageUrl as string] : []),
+    ...((news as any).images ?? []),
+  ].filter(Boolean);
 
   return (
     <main className="bg-[#f8fafb] min-h-screen">
-      {/* Breadcrumb */}
+      {/* 1. Breadcrumb */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-2 text-sm text-slate-400">
           <Link href="/" className="hover:text-teal-500 transition-colors">
@@ -51,63 +54,43 @@ export default async function NewsDetailPage({ params }: Props) {
             Мэдээ
           </Link>
           <span>/</span>
-          <span className="text-slate-600 truncate max-w-sm">
-            {activity.title}
-          </span>
+          <span className="text-slate-600 truncate max-w-sm">{news.title}</span>
         </div>
       </div>
 
-      <article className="max-w-4xl mx-auto px-6 py-12">
-        {/* Meta badges */}
-        <div className="flex flex-wrap items-center gap-3 mb-5">
+      <article className="max-w-4xl mx-auto px-6 py-10">
+        {/* 2. Ангилал · Огноо · Байршил */}
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           <span
             className={`text-xs font-semibold px-3 py-1 rounded-full ${
-              categoryColor[activity.category] ?? categoryColor["Бусад"]
+              categoryColor[news.category] ?? categoryColor["Бусад"]
             }`}
           >
-            {activity.category}
+            {news.category}
           </span>
-          {activity.highlight && (
+          {news.highlight && (
             <span className="text-xs text-teal-500 font-semibold bg-teal-50 px-3 py-1 rounded-full">
               ★ Онцлох
             </span>
           )}
-          <span className="text-xs text-slate-400">{activity.date}</span>
-          {activity.location && (
-            <span className="text-xs text-slate-400">
-              📍 {activity.location}
-            </span>
+          <span className="text-xs text-slate-400">{news.date}</span>
+          {news.location && (
+            <span className="text-xs text-slate-400">📍 {news.location}</span>
           )}
         </div>
 
-        {/* Title */}
+        {/* 3. Гарчиг */}
         <h1
-          className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-5"
+          className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-6"
           style={{ fontFamily: "'Georgia', serif" }}
         >
-          {activity.title}
+          {news.title}
         </h1>
 
-        {/* Cover image */}
-        {activity.imageUrl && (
-          <div className="mb-8 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-            <img
-              src={activity.imageUrl}
-              alt={activity.title}
-              className="w-full h-80 object-cover"
-            />
-          </div>
-        )}
-
-        {/* Excerpt */}
-        <p className="text-base text-slate-500 leading-relaxed mb-8 border-l-4 border-teal-400 pl-5 italic">
-          {activity.excerpt}
-        </p>
-
         {/* Tags */}
-        {activity.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {activity.tags.map((tag: string) => (
+        {news.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {news.tags.map((tag: string) => (
               <span
                 key={tag}
                 className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full"
@@ -118,11 +101,23 @@ export default async function NewsDetailPage({ params }: Props) {
           </div>
         )}
 
-        <div className="h-px bg-gray-200 mb-10" />
+        {/* 4. Зургийн gallery */}
+        {allImages.length > 0 && (
+          <div className="mb-8">
+            <NewsGallery images={allImages} />
+          </div>
+        )}
 
-        {/* Content */}
+        {/* 5. Товч тайлбар */}
+        <p className="text-base text-slate-500 leading-relaxed mb-8 border-l-4 border-teal-400 pl-5 italic">
+          {news.excerpt}
+        </p>
+
+        <div className="h-px bg-gray-200 mb-8" />
+
+        {/* 6. Агуулга */}
         <div className="space-y-4">
-          {activity.content.split("\n").map((line: string, i: number) =>
+          {news.content.split("\n").map((line: string, i: number) =>
             line.trim() === "" ? (
               <div key={i} className="h-2" />
             ) : line.startsWith("-") ? (

@@ -13,6 +13,7 @@ type News = {
   excerpt: string;
   content: string;
   imageUrl: string;
+  images?: string[];
   highlight: boolean;
   published: boolean;
 };
@@ -32,9 +33,10 @@ type NewsForm = {
   tagsRaw: string;
   excerpt: string;
   content: string;
+  imageUrl: string;
+  images: string[];
   highlight: boolean;
   published: boolean;
-  imageUrl: string;
 };
 
 const EMPTY_FORM: NewsForm = {
@@ -47,6 +49,7 @@ const EMPTY_FORM: NewsForm = {
   excerpt: "",
   content: "",
   imageUrl: "",
+  images: [],
   highlight: false,
   published: false,
 };
@@ -169,6 +172,7 @@ export default function AdminNewsSection({
     setForm(EMPTY_FORM);
     setModal("create");
   };
+
   const openEdit = (item: News) => {
     setEditing(item);
     setForm({
@@ -181,6 +185,7 @@ export default function AdminNewsSection({
       excerpt: item.excerpt,
       content: item.content,
       imageUrl: item.imageUrl || "",
+      images: item.images || [],
       highlight: item.highlight,
       published: item.published,
     });
@@ -196,6 +201,7 @@ export default function AdminNewsSection({
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
+      images: form.images,
     };
     try {
       if (modal === "create") {
@@ -255,6 +261,13 @@ export default function AdminNewsSection({
     }
   };
 
+  // Зураг устгах
+  const removeImage = (idx: number) =>
+    setForm((f) => ({
+      ...f,
+      images: (f.images ?? []).filter((_, i) => i !== idx),
+    }));
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
@@ -291,14 +304,30 @@ export default function AdminNewsSection({
                   className="hover:bg-slate-50/60 transition-colors"
                 >
                   <td className="px-5 py-3.5">
-                    <p className="font-medium text-slate-700 line-clamp-1">
-                      {item.title}
-                    </p>
-                    {item.highlight && (
-                      <span className="text-[10px] text-teal-500">
-                        ★ Онцлох
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt=""
+                          className="w-8 h-8 rounded-lg object-cover shrink-0"
+                        />
+                      )}
+                      <div>
+                        <p className="font-medium text-slate-700 line-clamp-1">
+                          {item.title}
+                        </p>
+                        {item.highlight && (
+                          <span className="text-[10px] text-teal-500">
+                            ★ Онцлох
+                          </span>
+                        )}
+                        {(item.images?.length ?? 0) > 0 && (
+                          <span className="text-[10px] text-slate-400 ml-1">
+                            🖼 {item.images!.length} зураг
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-5 py-3.5">
                     <span
@@ -392,14 +421,16 @@ export default function AdminNewsSection({
               />
             </Field>
           </div>
+
           <Field label="Гарчиг">
             <input
               className={inputCls}
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Мэдээны нэр"
+              placeholder="Мэдээний нэр"
             />
           </Field>
+
           <div className="grid grid-cols-2 gap-4">
             <Field label="Огноо">
               <input
@@ -418,15 +449,17 @@ export default function AdminNewsSection({
               />
             </Field>
           </div>
+
           <Field label="Таг (таслалаар)">
             <input
               className={inputCls}
               value={form.tagsRaw}
               onChange={(e) => setForm({ ...form, tagsRaw: e.target.value })}
-              placeholder="200+ оролцогч, Улаанбаатар"
+              placeholder="ГССҮТ, Хамтын ажиллагаа"
             />
           </Field>
-          <Field label="Товч тайлбар (card-д харагдана)">
+
+          <Field label="Товч тайлбар">
             <textarea
               className={inputCls}
               rows={2}
@@ -434,6 +467,7 @@ export default function AdminNewsSection({
               onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
             />
           </Field>
+
           <Field label="Дэлгэрэнгүй агуулга">
             <textarea
               className={inputCls}
@@ -442,46 +476,110 @@ export default function AdminNewsSection({
               onChange={(e) => setForm({ ...form, content: e.target.value })}
             />
           </Field>
-          <Field label="Нүүр зураг (заавал биш)">
-            <div className="flex gap-2 items-center">
-              <input
-                className={`${inputCls} flex-1`}
-                value={form.imageUrl}
-                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                placeholder="Зургийн URL (upload хийсний дараа автоматаар орно)"
-              />
-              <CldUploadWidget
-                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                options={{
-                  resourceType: "image",
-                  maxFileSize: 5_000_000,
-                  folder: "posm/news",
-                }}
-                onSuccess={(result) => {
-                  const info = result.info as { secure_url: string };
-                  if (info?.secure_url)
-                    setForm((f) => ({ ...f, imageUrl: info.secure_url }));
-                }}
-              >
-                {({ open }) => (
-                  <button
-                    type="button"
-                    onClick={() => open()}
-                    className="shrink-0 px-3 py-2 text-xs font-semibold bg-teal-50 text-teal-600 hover:bg-teal-100 rounded-lg border border-teal-100 transition-colors whitespace-nowrap"
-                  >
-                    🖼 Upload
-                  </button>
-                )}
-              </CldUploadWidget>
+
+          {/* ── Зургийн хэсэг ── */}
+          <Field label="Зурагнууд">
+            <div className="space-y-3">
+              {/* Upload товч */}
+              <div className="flex items-center gap-3">
+                <CldUploadWidget
+                  uploadPreset={
+                    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+                  }
+                  options={{
+                    resourceType: "image",
+                    maxFileSize: 5_000_000,
+                    folder: "posm/news",
+                  }}
+                  onSuccess={(result) => {
+                    const info = result.info as { secure_url: string };
+                    if (!info?.secure_url) return;
+                    // Эхний зураг нүүр зураг болно, бусад images[] руу орно
+                    setForm((f) => {
+                      if (!f.imageUrl)
+                        return { ...f, imageUrl: info.secure_url };
+                      return { ...f, images: [...f.images, info.secure_url] };
+                    });
+                  }}
+                >
+                  {({ open }) => (
+                    <button
+                      type="button"
+                      onClick={() => open()}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-teal-50 text-teal-600 hover:bg-teal-100 rounded-xl border border-teal-100 transition-colors"
+                    >
+                      <span className="text-base">🖼</span>
+                      Зураг нэмэх
+                    </button>
+                  )}
+                </CldUploadWidget>
+                <span className="text-xs text-slate-400">
+                  {
+                    [form.imageUrl, ...(form.images ?? [])].filter(Boolean)
+                      .length
+                  }{" "}
+                  зураг нэмэгдсэн
+                </span>
+              </div>
+
+              {/* Preview grid */}
+              {[form.imageUrl, ...(form.images ?? [])].filter(Boolean).length >
+                0 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {/* Нүүр зураг */}
+                  {form.imageUrl && (
+                    <div className="relative group">
+                      <img
+                        src={form.imageUrl}
+                        alt=""
+                        className="w-full h-20 object-cover rounded-xl border-2 border-teal-400"
+                      />
+                      <div className="absolute bottom-1 left-1 bg-teal-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        Нүүр
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Нүүр зураг устгахад дараагийн зураг нүүр болно
+                          const next = form.images[0] || "";
+                          setForm((f) => ({
+                            ...f,
+                            imageUrl: next,
+                            images: f.images.slice(1),
+                          }));
+                        }}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+                  {/* Нэмэлт зурагнууд */}
+                  {form.images.map((url, i) => (
+                    <div key={i} className="relative group">
+                      <img
+                        src={url}
+                        alt=""
+                        className="w-full h-20 object-cover rounded-xl border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(i)}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <p className="text-xs text-slate-400">
+                Эхний зураг нүүр зураг болно. Hover хийж × дарвал устгана.
+              </p>
             </div>
-            {form.imageUrl && (
-              <img
-                src={form.imageUrl}
-                alt=""
-                className="mt-2 h-24 w-full object-cover rounded-lg border border-gray-100"
-              />
-            )}
           </Field>
+
           <div className="flex gap-6 mt-1">
             <Toggle
               value={form.highlight}
@@ -494,6 +592,7 @@ export default function AdminNewsSection({
               label="Нийтлэх"
             />
           </div>
+
           <div className="flex justify-end gap-2 mt-6">
             <button
               onClick={() => setModal(null)}
