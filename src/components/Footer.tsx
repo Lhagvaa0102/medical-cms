@@ -5,10 +5,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-gray-100 border-t border-gray-800">
-      {/* Main Footer Content */}
       <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Organization Info */}
           <div>
             <h3 className="text-sm font-semibold text-teal-400 tracking-widest uppercase mb-4">
               About POSM
@@ -27,7 +25,6 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-sm font-semibold text-teal-400 tracking-widest uppercase mb-4">
               Resources
@@ -48,7 +45,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Membership */}
           <div>
             <h3 className="text-sm font-semibold text-teal-400 tracking-widest uppercase mb-4">
               Membership
@@ -69,7 +65,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className="text-sm font-semibold text-teal-400 tracking-widest uppercase mb-4">
               Contact
@@ -101,11 +96,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="border-t border-gray-800 pt-8 mt-8">
-          {/* Bottom Section */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Copyright */}
             <div className="text-sm text-gray-500">
               <p>
                 © {currentYear} Pediatric Orthopedic Society of Mongolia. All
@@ -113,7 +105,6 @@ export default function Footer() {
               </p>
             </div>
 
-            {/* Social Links */}
             <div className="flex items-center gap-5">
               {[
                 { name: "LinkedIn", icon: "linkedin" },
