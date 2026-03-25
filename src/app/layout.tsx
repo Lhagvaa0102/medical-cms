@@ -1,39 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
-import { Inter } from "next/font/google";
 import SiteShell from "@/components/SiteShell";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
+// ── Fonts ─────────────────────────────────────────────────
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
-  variable: "--font-intern",
 });
 
+const notoSans = Noto_Sans({
+  subsets: ["latin", "cyrillic"], // Монгол кирилл
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-noto",
+  display: "swap",
+});
+
+// ── Metadata ──────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "Pediatric Orthopedic Society of Mongolia",
+  title: "POSM — Монголын Хүүхдийн Ортопед Травматологийн Нийгэмлэг",
   description: "Pediatric Orthopedic Society of Mongolia",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="mn">
-      <body className={`${inter.variable} antialiased`}>
+    <html lang="mn" className={`${inter.variable} ${notoSans.variable}`}>
+      <body className="font-noto antialiased bg-white text-slate-900">
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

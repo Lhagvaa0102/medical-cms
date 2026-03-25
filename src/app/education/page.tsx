@@ -1,108 +1,6 @@
 "use client";
 import { useState } from "react";
-
-type Tip = {
-  id: number;
-  category: string;
-  categoryIcon: string;
-  title: string;
-  summary: string;
-  content: string[];
-  color: string;
-};
-
-const tips: Tip[] = [
-  {
-    id: 1,
-    category: "Яс, үе мөч",
-    categoryIcon: "🦴",
-    color: "teal",
-    title: "Хүүхдийн хөлийн тавхайн хавтгайрал",
-    summary:
-      "Хүүхдийн хөлийн тавхайн хавтгайрал нь нийтлэг боловч эрт анхаарал хандуулах шаардлагатай.",
-    content: [
-      "2–6 насны хүүхдийн хөлийн тавхай байгалийн жамаар хавтгай байдаг тул санаа зовох хэрэггүй.",
-      "Хүүхэд явж эхлэх үед хөлийн дунд нуман хэсэг аажмаар хөгжинө.",
-      "Хэрэв 6 нас хүрсэн ч тавхай хавтгай хэвээр байвал, мөн өвддөг, ядардаг бол эмчид хандана уу.",
-      "Тусгай шаахай, дасгал хөдөлгөөн нь засалтад тусалдаг.",
-    ],
-  },
-  {
-    id: 2,
-    category: "Нуруу",
-    categoryIcon: "🏃",
-    color: "cyan",
-    title: "Хүүхдийн нурууны баруун-зүүн гажилт (Сколиоз)",
-    summary:
-      "Сколиоз нь эрт илрүүлснээр амжилттай эмчлэгддэг. Эцэг эхчүүд юуг анхаарах вэ?",
-    content: [
-      "10–15 насны охид сколиоз-д илүү өртдөг.",
-      "Хүүхдийн мөрний яс тэгш бус, нуруу нь гулзайсан мэт харагдвал эмчид хандана уу.",
-      "Уут үүрэх зуршил, сууж байх байдал нурууны эрүүл мэндэд чухал нөлөө үзүүлдэг.",
-      "Жилд нэг удаа эмч дэргэд үзүүлж нурууны байдлыг шалгуулахыг зөвлөдөг.",
-    ],
-  },
-  {
-    id: 3,
-    category: "Гэмтэл",
-    categoryIcon: "🩹",
-    color: "sky",
-    title: "Хүүхдийн яс хугарахад юу хийх вэ?",
-    summary:
-      "Хүүхдийн яс том хүний ясаас зөөлөн, уян хатан тул эмчлэлт нь ихэвчлэн хурдан.",
-    content: [
-      "Гэмтсэн хэсгийг хөдөлгөхгүй байлгаж, нэн даруй эмчид хандана уу.",
-      "Хүйтэн зүйл (мөс) тавих нь хаван буурахад тусалдаг — шууд арьсан дээр биш, алчуурт ороогоод тавина.",
-      "Хүүхдийн яс хурдан эдгэрдэг тул гипс тавих хугацаа том хүнийхээс богино байдаг.",
-      "Эмчийн зөвшөөрөлгүйгээр гипс авахгүй, биеийн тамирын дасгал хийлгэхгүй байна уу.",
-    ],
-  },
-  {
-    id: 4,
-    category: "Хөгжил",
-    categoryIcon: "👶",
-    color: "teal",
-    title: "Хүүхдийн алхах цаг хэзээ болдог вэ?",
-    summary:
-      "Хүүхэд бүр өөр хурдаар хөгждөг боловч дараах шинж тэмдгүүдэд анхаарна уу.",
-    content: [
-      "Ихэнх хүүхэд 9–12 сартайдаа алхаж эхэлдэг, 15 сар хүртэл хэвийн гэж үзнэ.",
-      "18 сар болсон ч алхаж чадахгүй байвал заавал эмчид үзүүлнэ.",
-      "Хөлийн хуруу дээрээ алхах, хөлөө зооглох зэрэг нь зарим тохиолдолд ортопедын шалтгаантай байдаг.",
-      "Хүүхдэд хурдан явж сурахаар хэт хүч болгохоос зайлсхий — байгалийн хурдаар хөгжихийг дэмж.",
-    ],
-  },
-  {
-    id: 5,
-    category: "Урьдчилан сэргийлэх",
-    categoryIcon: "🛡️",
-    color: "cyan",
-    title: "Гэрт болон цэцэрлэгт хүүхдийн гэмтлээс урьдчилан сэргийлэх",
-    summary:
-      "Хүүхдийн гэмтлийн 40 гаруй хувь нь гэрт болдог. Энгийн арга хэмжээгээр урьдчилан сэргийлж болно.",
-    content: [
-      "Шат, цонх, тагт дэргэд хаалт, торлог хийнэ.",
-      "Гулгамтгай шалан дээр хивс эсвэл гулгахгүй дэвсгэр хэрэглэнэ.",
-      "Дугуй, гулгуур унаанд дуулга заавал өмсгөдөг зуршил төлөвшүүлнэ.",
-      "Тоглоомын талбайн тоног төхөөрөмж эвдрэлгүй, аюулгүй эсэхийг байнга шалгана.",
-    ],
-  },
-  {
-    id: 6,
-    category: "Яс, үе мөч",
-    categoryIcon: "🦴",
-    color: "sky",
-    title: "Д витамин ба хүүхдийн ясны эрүүл мэнд",
-    summary:
-      "Д витамин дутагдал нь рахит болон ясны сулрахад хүргэдэг. Монголд энэ нь нийтлэг асуудал.",
-    content: [
-      "Монголын хүүхдийн 60 гаруй хувьд Д витаминий дутагдал илэрдэг.",
-      "Наранд 15–20 минут тогтмол гарч байх нь Д витаминыг байгалийн замаар нөхөхөд тусалдаг.",
-      "Загас, өндгөний шар, сүүн бүтээгдэхүүн зэрэг хоол Д витаминаар баялаг.",
-      "Эмчийн зөвлөгөөгөөр Д витаминий нэмэлт тэжээл хэрэглэж болно — тун нь насаас хамаарна.",
-    ],
-  },
-];
+import { tips } from "@/data";
 
 const ALL_CATEGORIES = [
   "Бүгд",
@@ -143,10 +41,7 @@ export default function EducationPage() {
       : tips.filter((t) => t.category === activeCategory);
 
   return (
-    <div
-      className="min-h-screen bg-slate-50"
-      style={{ fontFamily: "'Noto Sans', sans-serif" }}
-    >
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
       <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 text-white">
         <div className="max-w-5xl mx-auto px-6 py-16">
@@ -164,8 +59,8 @@ export default function EducationPage() {
         </div>
 
         {/* Category filter */}
-        <div className="max-w-5xl mx-auto px-6 pb-0">
-          <div className="flex gap-2 flex-wrap border-b border-white/20 pb-0">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="flex gap-2 flex-wrap border-b border-white/20">
             {ALL_CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -178,9 +73,7 @@ export default function EducationPage() {
               >
                 {cat}
                 <span
-                  className={`ml-2 text-xs rounded-full px-1.5 py-0.5 ${
-                    activeCategory === cat ? "bg-white/25" : "bg-white/10"
-                  }`}
+                  className={`ml-2 text-xs rounded-full px-1.5 py-0.5 ${activeCategory === cat ? "bg-white/25" : "bg-white/10"}`}
                 >
                   {cat === "Бүгд"
                     ? tips.length
@@ -201,13 +94,13 @@ export default function EducationPage() {
             return (
               <div
                 key={tip.id}
+                id={`tip-${tip.id}`}
                 className={`bg-white rounded-2xl border shadow-sm transition-all duration-300 overflow-hidden flex flex-col ${
                   isOpen
                     ? `${c.border} shadow-md`
                     : "border-slate-100 hover:shadow-md hover:-translate-y-1"
                 }`}
               >
-                {/* Card header */}
                 <div className="p-5 flex-1">
                   <div className="flex items-start gap-3 mb-3">
                     <div
@@ -229,7 +122,6 @@ export default function EducationPage() {
                   </p>
                 </div>
 
-                {/* Expanded content */}
                 {isOpen && (
                   <div className="px-5 pb-4">
                     <ul className="space-y-2.5 border-t border-slate-100 pt-4">
@@ -249,14 +141,13 @@ export default function EducationPage() {
                   </div>
                 )}
 
-                {/* Toggle button */}
                 <div className="px-5 pb-5">
                   <button
                     onClick={() => setExpandedId(isOpen ? null : tip.id)}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                       isOpen
                         ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                        : `${c.btn}`
+                        : c.btn
                     }`}
                   >
                     {isOpen ? "Хураах ↑" : "Дэлгэрэнгүй үзэх →"}

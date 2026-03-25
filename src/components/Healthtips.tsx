@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { healthTips } from "../data";
+import { healthTipsData } from "@/data";
 import { SectionHeader } from "../ui/ui";
 
 export default function HealthTips() {
+  // Эхний 4-г харуулна
+  const displayed = healthTipsData.slice(0, 4);
+
   return (
     <section className="bg-white border-y border-gray-100 py-16">
       <div className="max-w-6xl mx-auto px-4">
@@ -13,7 +16,7 @@ export default function HealthTips() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {healthTips.map((tip) => (
+          {displayed.map((tip) => (
             <TipCard key={tip.id} tip={tip} />
           ))}
         </div>
@@ -31,13 +34,16 @@ export default function HealthTips() {
   );
 }
 
-function TipCard({ tip }) {
+type TipCardProps = ReturnType<
+  typeof import("@/data").healthTipsData.map<never>
+>;
+
+function TipCard({ tip }: { tip: (typeof healthTipsData)[number] }) {
   return (
     <Link
       href={tip.href}
       className={`group relative rounded-2xl bg-gradient-to-br ${tip.color} border border-gray-100 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden`}
     >
-      {/* Background decoration */}
       <div className="absolute -bottom-4 -right-4 text-6xl opacity-10 select-none pointer-events-none">
         {tip.icon}
       </div>
@@ -46,7 +52,9 @@ function TipCard({ tip }) {
       <h3 className={`text-base font-bold mb-1.5 ${tip.accent}`}>
         {tip.title}
       </h3>
-      <p className="text-sm text-gray-500 leading-relaxed">{tip.shortDesc}</p>
+      <p className="text-sm text-gray-500 leading-relaxed line-clamp-3">
+        {tip.shortDesc}
+      </p>
 
       <div
         className={`mt-4 flex items-center gap-1 text-xs font-semibold ${tip.accent} opacity-0 group-hover:opacity-100 transition-opacity`}

@@ -39,7 +39,7 @@ const MONTHS = [
 
 function fmtDate(d: string) {
   const dt = new Date(d);
-  return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]}ын ${dt.getUTCDate()}`;
+  return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]} сарын ${dt.getUTCDate()}`;
 }
 
 function CalendarIcon() {
@@ -163,9 +163,7 @@ export default function MeetingPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3">
-                Хурал &amp;
-                <br />
-                Зөвөлгөөн
+                Хурал &amp; Зөвөлгөөн
               </h1>
               <p className="text-teal-100 text-base max-w-lg leading-relaxed">
                 POSM-ын зохион байгуулдаг хурал, семинар, сургалтуудын мэдээлэл

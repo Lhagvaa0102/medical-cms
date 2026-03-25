@@ -142,7 +142,7 @@ export default function AboutUs() {
       </section>
 
       {/* Stats */}
-      <section className="bg-white border-b border-slate-100">
+      {/* <section className="bg-white border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
             {stats.map((s) => (
@@ -157,7 +157,7 @@ export default function AboutUs() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Mission */}
       <section className="max-w-6xl mx-auto px-6 py-20">

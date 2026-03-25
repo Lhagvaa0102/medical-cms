@@ -33,7 +33,7 @@ export default function Header() {
                 POSM
               </h1>
               <p className="text-sm text-gray-500 font-medium">
-                Pediatric Orthopedic Society of Mongolia
+                Монголын Хүүхдийн Гэмтэл Согог Судлалын Нийгэмлэг
               </p>
             </div>
           </Link>
@@ -44,13 +44,13 @@ export default function Header() {
               href="/join"
               className="hidden sm:inline-flex px-5 py-2 text-[12px] font-semibold uppercase tracking-widest text-slate-700 border border-slate-200 rounded-full hover:border-slate-400 hover:text-slate-900 transition-all duration-200"
             >
-              Join
+              Элсэх
             </a>
             <a
               href="/donate"
               className="inline-flex px-5 py-2 text-[12px] font-semibold uppercase tracking-widest text-white bg-slate-900 rounded-full hover:bg-teal-600 transition-all duration-300"
             >
-              Donate
+              Хандив
             </a>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

@@ -1,14 +1,58 @@
 @import "tailwindcss";
+
+/* ── Font variables Tailwind v4-д ── */
+@theme {
+  --font-sans:
+    var(--font-noto), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-noto: var(--font-noto), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
+}
+
+/* ── Base typography ── */
+html {
+  font-family: var(--font-noto), var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: #1e293b;
+  background: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* ── Hero fade animation ── */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s ease both;
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* ── Scrollbar hide ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
