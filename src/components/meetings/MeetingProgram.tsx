@@ -22,7 +22,7 @@ type Props = {
   description?: string;
   attendees?: number;
   sessions: Session[];
-  pptUrl?: string; // хэрэглэхгүй болсон ч props-д хэвээр байна
+  pptUrl?: string;
 };
 
 export default function MeetingProgram({
@@ -66,6 +66,7 @@ export default function MeetingProgram({
     "11-р сар",
     "12-р сар",
   ];
+
   const formatDate = (d: string) => {
     const dt = new Date(d);
     return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]}ын ${dt.getUTCDate()}`;
@@ -75,10 +76,9 @@ export default function MeetingProgram({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* ── Hero ── */}
+      {/* Hero */}
       <div className="bg-gradient-to-br from-teal-700 via-teal-600 to-cyan-600 text-white">
-        <div className="max-w-6xl mx-auto px-6 pt-10 pb-14">
-          {/* Breadcrumb */}
+        <div className="max-w-6xl mx-auto px-4 md:px-6 pt-10 pb-14">
           <div className="flex items-center gap-2 text-teal-200 text-xs mb-8">
             <Link href="/" className="hover:text-white transition-colors">
               Нүүр
@@ -100,14 +100,12 @@ export default function MeetingProgram({
                 <span className="w-1.5 h-1.5 rounded-full bg-teal-300 animate-pulse" />
                 {organizer} · Эрдэм шинжилгээний хурал
               </div>
-
               <h1
-                className="text-3xl md:text-4xl font-extrabold leading-tight mb-4"
+                className="text-2xl md:text-4xl font-extrabold leading-tight mb-4"
                 style={{ fontFamily: "'Georgia', serif" }}
               >
                 {title}
               </h1>
-
               <div className="flex flex-wrap gap-4 text-sm text-teal-100">
                 <span className="flex items-center gap-1.5">
                   <CalIcon />
@@ -121,7 +119,6 @@ export default function MeetingProgram({
               </div>
             </div>
 
-            {/* Stats */}
             <div className="flex gap-3 shrink-0">
               {[
                 { value: sessionCount, label: "Илтгэл" },
@@ -130,10 +127,12 @@ export default function MeetingProgram({
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-4 text-center min-w-[72px]"
+                  className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-4 py-3 text-center min-w-[64px]"
                 >
-                  <p className="text-2xl font-extrabold">{s.value}</p>
-                  <p className="text-teal-200 text-[11px] mt-0.5 uppercase tracking-widest">
+                  <p className="text-xl md:text-2xl font-extrabold">
+                    {s.value}
+                  </p>
+                  <p className="text-teal-200 text-[10px] mt-0.5 uppercase tracking-widest">
                     {s.label}
                   </p>
                 </div>
@@ -141,7 +140,6 @@ export default function MeetingProgram({
             </div>
           </div>
 
-          {/* Search */}
           <div className="relative mt-8 max-w-sm">
             <SearchIcon />
             <input
@@ -155,11 +153,11 @@ export default function MeetingProgram({
         </div>
       </div>
 
-      {/* ── Program table ── */}
-      <div className="max-w-6xl mx-auto px-6 -mt-6 pb-16">
+      {/* Table */}
+      <div className="max-w-6xl mx-auto px-4 md:px-6 -mt-6 pb-16">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-          {/* Table header */}
-          <div className="grid grid-cols-[3rem_5rem_1fr_1.4fr_1.2fr_5rem_4rem] bg-slate-800 text-white text-xs font-semibold uppercase tracking-wider">
+          {/* Desktop header */}
+          <div className="hidden md:grid grid-cols-[3rem_5rem_1fr_1.4fr_1.2fr_5rem_4rem] bg-slate-800 text-white text-xs font-semibold uppercase tracking-wider">
             <div className="px-4 py-3.5 text-center">#</div>
             <div className="px-4 py-3.5">Цаг</div>
             <div className="px-4 py-3.5">Илтгэгч</div>
@@ -169,28 +167,33 @@ export default function MeetingProgram({
             <div className="px-4 py-3.5 text-center">PPT</div>
           </div>
 
-          {/* Rows */}
+          {/* Mobile header */}
+          <div className="grid md:hidden grid-cols-[3.5rem_1fr_1.2fr] bg-slate-800 text-white text-xs font-semibold uppercase tracking-wider">
+            <div className="px-3 py-3 text-center">Цаг</div>
+            <div className="px-3 py-3">Илтгэгч</div>
+            <div className="px-3 py-3">Сэдэв</div>
+          </div>
+
           <div className="divide-y divide-slate-100">
             {displayed.length === 0 && search && (
-              <div className="py-16 text-center text-slate-400 text-sm">
+              <div className="py-12 text-center text-slate-400 text-sm">
                 "{search}" илтгэл олдсонгүй
               </div>
             )}
             {sessions.length === 0 && !search && (
-              <div className="py-16 text-center text-slate-400 text-sm">
+              <div className="py-12 text-center text-slate-400 text-sm">
                 Хөтөлбөр оруулаагүй байна
               </div>
             )}
 
             {displayed.map((session, i) => {
-              // ── Break row ──
               if (session.isBreak) {
                 return (
                   <div
                     key={i}
                     className="bg-gradient-to-r from-amber-50 to-orange-50 border-y border-amber-100"
                   >
-                    <div className="flex items-center gap-3 px-6 py-3">
+                    <div className="flex items-center gap-3 px-4 md:px-6 py-3">
                       <span className="text-amber-500">☕</span>
                       <span className="font-semibold text-amber-800 text-sm">
                         {session.speaker}
@@ -203,7 +206,6 @@ export default function MeetingProgram({
                 );
               }
 
-              // ── Session row ──
               rowIdx++;
               const num = rowIdx;
               const isHov = hoveredIdx === i;
@@ -213,80 +215,109 @@ export default function MeetingProgram({
                   key={i}
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
-                  className={`grid grid-cols-[3rem_5rem_1fr_1.4fr_1.2fr_5rem_4rem] transition-colors duration-100 ${
-                    isHov
-                      ? "bg-teal-50"
-                      : num % 2 === 0
-                        ? "bg-slate-50/50"
-                        : "bg-white"
-                  }`}
                 >
-                  {/* # */}
-                  <div className="px-4 py-4 flex items-center justify-center">
-                    <span className="text-xs font-bold text-slate-300">
-                      {num}
-                    </span>
-                  </div>
-
-                  {/* Цаг */}
-                  <div className="px-4 py-4 flex items-center">
-                    <span
-                      className={`text-sm font-bold tabular-nums ${isHov ? "text-teal-600" : "text-slate-700"}`}
-                    >
-                      {session.time}
-                    </span>
-                  </div>
-
-                  {/* Илтгэгч */}
-                  <div className="px-4 py-4 flex items-center">
-                    <p
-                      className={`text-sm font-semibold ${isHov ? "text-teal-800" : "text-slate-800"}`}
-                    >
-                      {session.speaker}
-                    </p>
-                  </div>
-
-                  {/* Байгууллага */}
-                  <div className="px-4 py-4 flex items-center">
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      {session.organization}
-                    </p>
-                  </div>
-
-                  {/* Сэдэв */}
-                  <div className="px-4 py-4 flex items-center">
-                    <p
-                      className={`text-sm leading-snug ${isHov ? "text-teal-700 font-medium" : "text-slate-700"}`}
-                    >
-                      {session.topic}
-                    </p>
-                  </div>
-
-                  {/* Үргэлжлэх */}
-                  <div className="px-4 py-4 flex items-center justify-end">
-                    {session.duration && (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2.5 py-1 whitespace-nowrap">
-                        <ClockIcon />
-                        {session.duration}
+                  {/* ── Desktop row ── */}
+                  <div
+                    className={`hidden md:grid grid-cols-[3rem_5rem_1fr_1.4fr_1.2fr_5rem_4rem] transition-colors duration-100 ${
+                      isHov
+                        ? "bg-teal-50"
+                        : num % 2 === 0
+                          ? "bg-slate-50/50"
+                          : "bg-white"
+                    }`}
+                  >
+                    <div className="px-4 py-4 flex items-center justify-center">
+                      <span className="text-xs font-bold text-slate-300">
+                        {num}
                       </span>
-                    )}
+                    </div>
+                    <div className="px-4 py-4 flex items-center">
+                      <span
+                        className={`text-sm font-bold tabular-nums ${isHov ? "text-teal-600" : "text-slate-700"}`}
+                      >
+                        {session.time}
+                      </span>
+                    </div>
+                    <div className="px-4 py-4 flex items-center">
+                      <p
+                        className={`text-sm font-semibold ${isHov ? "text-teal-800" : "text-slate-800"}`}
+                      >
+                        {session.speaker}
+                      </p>
+                    </div>
+                    <div className="px-4 py-4 flex items-center">
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        {session.organization}
+                      </p>
+                    </div>
+                    <div className="px-4 py-4 flex items-center">
+                      <p
+                        className={`text-sm leading-snug ${isHov ? "text-teal-700 font-medium" : "text-slate-700"}`}
+                      >
+                        {session.topic}
+                      </p>
+                    </div>
+                    <div className="px-4 py-4 flex items-center justify-end">
+                      {session.duration && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 bg-slate-100 rounded-full px-2.5 py-1 whitespace-nowrap">
+                          <ClockIcon />
+                          {session.duration}
+                        </span>
+                      )}
+                    </div>
+                    <div className="px-4 py-4 flex items-center justify-center">
+                      {session.pptUrl ? (
+                        <a
+                          href={session.pptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="PPT татах"
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white transition-colors"
+                        >
+                          <PptIcon />
+                        </a>
+                      ) : (
+                        <span className="text-slate-200 text-xs">—</span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* PPT — илтгэл бүрийн татах товч */}
-                  <div className="px-4 py-4 flex items-center justify-center">
-                    {session.pptUrl ? (
-                      <a
-                        href={session.pptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="PPT татах"
-                        className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white transition-colors"
-                      >
-                        <PptIcon />
-                      </a>
-                    ) : (
-                      <span className="text-slate-200 text-xs">—</span>
-                    )}
+                  {/* ── Mobile row — зөвхөн Цаг, Илтгэгч, Сэдэв ── */}
+                  <div
+                    className={`grid md:hidden grid-cols-[3.5rem_1fr_1.2fr] transition-colors duration-100 ${
+                      num % 2 === 0 ? "bg-slate-50/50" : "bg-white"
+                    }`}
+                  >
+                    <div className="px-3 py-3.5 flex items-start justify-center pt-4">
+                      <span className="text-xs font-bold text-teal-600 tabular-nums">
+                        {session.time}
+                      </span>
+                    </div>
+                    <div className="px-3 py-3.5">
+                      <p className="text-sm font-semibold text-slate-800 leading-tight">
+                        {session.speaker}
+                      </p>
+                      {session.pptUrl && (
+                        <a
+                          href={session.pptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 mt-1 text-[10px] text-teal-500 font-medium"
+                        >
+                          <PptIcon small /> PPT
+                        </a>
+                      )}
+                    </div>
+                    <div className="px-3 py-3.5">
+                      <p className="text-xs text-slate-600 leading-snug">
+                        {session.topic}
+                      </p>
+                      {session.duration && (
+                        <span className="inline-block mt-1 text-[10px] text-slate-400">
+                          {session.duration}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -294,14 +325,12 @@ export default function MeetingProgram({
           </div>
 
           {/* Footer */}
-          <div className="bg-slate-50 border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+          <div className="bg-slate-50 border-t border-slate-100 px-4 md:px-6 py-4 flex items-center justify-between">
             <span className="text-xs text-slate-400">
               Нийт <strong className="text-slate-600">{sessionCount}</strong>{" "}
               илтгэл
               {pptCount > 0 && (
-                <span className="ml-2 text-teal-500">
-                  · {pptCount} PPT татах боломжтой
-                </span>
+                <span className="ml-2 text-teal-500">· {pptCount} PPT</span>
               )}
             </span>
             <Link
@@ -317,7 +346,6 @@ export default function MeetingProgram({
   );
 }
 
-// ── Icons ─────────────────────────────────────────────────
 function CalIcon() {
   return (
     <svg
@@ -388,10 +416,10 @@ function ClockIcon() {
     </svg>
   );
 }
-function PptIcon() {
+function PptIcon({ small }: { small?: boolean }) {
   return (
     <svg
-      className="w-4 h-4"
+      className={small ? "w-3 h-3" : "w-4 h-4"}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
