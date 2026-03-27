@@ -119,10 +119,10 @@ export const heroSlides = [
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
 export const stats = [
-  { value: "500+", label: "Гишүүд" },
-  { value: "12+", label: "Жилийн туршлага" },
-  { value: "30+", label: "Жил бүрийн хурал" },
-  { value: "1000+", label: "Эмчилгээний тохиолдол" },
+  { value: "20+", label: "Гишүүд" },
+  { value: "3+", label: "Жилийн туршлага" },
+  { value: "2+", label: "Жил бүрийн хурал" },
+  { value: "500+", label: "Эмчилгээний тохиолдол" },
 ];
 export type Activity = {
   slug: string;
