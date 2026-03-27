@@ -28,7 +28,7 @@ function formatDate(dateStr: string): string {
     "11-р",
     "12-р",
   ];
-  return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]}ын ${dt.getUTCDate()}`;
+  return `${dt.getUTCFullYear()} оны ${MONTHS[dt.getUTCMonth()]} сарын ${dt.getUTCDate()}`;
 }
 
 export default function LatestNews() {
