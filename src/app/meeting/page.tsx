@@ -209,29 +209,36 @@ export default function MeetingPage() {
               {upcoming.map((conf) => (
                 <div
                   key={conf._id}
-                  className="relative overflow-hidden bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6 flex-shrink-0 snap-start"
-                  style={{ minWidth: "min(100%, 640px)" }}
+                  className="relative overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-blue-600 rounded-2xl text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6 w-full snap-start"
+
+                  // style={{ minWidth: "min(100%, 640px)" }}
                 >
+                  {/* Background decoration */}
                   <div className="absolute right-0 top-0 w-64 h-64 rounded-full bg-white/5 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-                  <div className="flex-1 relative">
+                  <div className="absolute left-0 bottom-0 w-40 h-40 rounded-full bg-white/5 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+
+                  <div className="flex-1 relative min-w-0">
                     <span className="inline-block mb-3 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-sm">
                       🗓 {fmtDate(conf.date)}
                     </span>
                     <h3 className="text-xl md:text-2xl font-bold leading-tight mb-2">
                       {conf.title}
                     </h3>
-                    <p className="text-teal-100 text-sm">{conf.description}</p>
+                    <p className="text-teal-100 text-sm line-clamp-2 leading-relaxed">
+                      {conf.description}
+                    </p>
                     <div className="flex flex-wrap gap-3 mt-4 text-sm text-teal-100">
-                      <span className="flex items-center gap-1.5">
+                      <span className="flex items-center gap-1.5 min-w-0">
                         <PinIcon />
-                        {conf.location}
+                        <span className="truncate">{conf.location}</span>
                       </span>
                     </div>
                   </div>
+
                   <div className="flex flex-col gap-3 flex-shrink-0">
                     <Link
                       href={`/meeting/${conf._id}`}
-                      className="px-6 py-2.5 border border-white/40 text-white text-sm font-semibold rounded-full hover:bg-white/10 transition text-center"
+                      className="px-6 py-2.5 border border-white/40 text-white text-sm font-semibold rounded-full hover:bg-white/10 transition text-center whitespace-nowrap"
                     >
                       Дэлгэрэнгүй
                     </Link>
