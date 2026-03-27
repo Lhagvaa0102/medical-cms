@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/mongodb";
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -28,10 +29,12 @@ export async function POST(req: NextRequest) {
     const degree = (formData.get("degree") as string)?.trim();
     const experience = (formData.get("experience") as string)?.trim() || null;
     const message = (formData.get("message") as string)?.trim() || null;
+    const receiptUrl = (formData.get("receiptUrl") as string)?.trim() || null;
+
     const photoFile = formData.get("photo") as File | null;
     const cvFile = formData.get("cv") as File | null;
 
-    // Validation
+    // Validation — required fields
     for (const [key, val] of Object.entries({
       lastName,
       firstName,
@@ -49,8 +52,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Upload photo → Cloudinary (image folder, auto crop)
-    let photoUrl: string | null = null;
+    // Гүйлгээний баримт заавал шаардлагатай
+    if (!receiptUrl) {
+      return NextResponse.json(
+        { error: "Гүйлгээний баримтын зургийг заавал оруулна уу" },
+        { status: 400 },
+      );
+    }
+
+    // Upload photo → Cloudinary
+    let photoCloudUrl: string | null = null;
     if (photoFile && photoFile.size > 0) {
       const base64 = await toBase64(photoFile);
       const result = await cloudinary.uploader.upload(base64, {
@@ -60,10 +71,10 @@ export async function POST(req: NextRequest) {
         ],
         resource_type: "image",
       });
-      photoUrl = result.secure_url;
+      photoCloudUrl = result.secure_url;
     }
 
-    // Upload CV → Cloudinary (raw folder)
+    // Upload CV → Cloudinary
     let cvUrl: string | null = null;
     if (cvFile && cvFile.size > 0) {
       const base64 = await toBase64(cvFile);
@@ -89,8 +100,9 @@ export async function POST(req: NextRequest) {
       degree,
       experience,
       message,
-      photoUrl,
+      photoUrl: photoCloudUrl,
       cvUrl,
+      receiptUrl, // Cloudinary-с ирсэн гүйлгээний баримтын URL
       status: "pending", // pending | approved | rejected
       createdAt: new Date(),
     });

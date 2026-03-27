@@ -33,6 +33,24 @@ const DEGREES = [
 
 type Status = "idle" | "loading" | "success" | "error";
 
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+
+async function uploadToCloudinary(file: File): Promise<string> {
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("upload_preset", UPLOAD_PRESET);
+  fd.append("folder", "posm/receipts");
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    { method: "POST", body: fd },
+  );
+  if (!res.ok) throw new Error("Cloudinary upload амжилтгүй болов");
+  const data = await res.json();
+  return data.secure_url as string;
+}
+
 export default function JoinPage() {
   const [form, setForm] = useState<FormData>({
     lastName: "",
@@ -45,14 +63,21 @@ export default function JoinPage() {
     experience: "",
     message: "",
   });
+
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [cv, setCv] = useState<File | null>(null);
+
+  // Receipt (гүйлгээний баримт)
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const photoRef = useRef<HTMLInputElement>(null);
   const cvRef = useRef<HTMLInputElement>(null);
+  const receiptRef = useRef<HTMLInputElement>(null);
 
   function handleChange(
     e: React.ChangeEvent<
@@ -98,6 +123,22 @@ export default function JoinPage() {
     setErrorMsg("");
   }
 
+  function handleReceipt(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("Гүйлгээний баримтыг зураг (JPG, PNG) форматаар оруулна уу");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMsg("Баримтын зургийн хэмжээ 5MB-аас хэтрэхгүй байх ёстой");
+      return;
+    }
+    setReceipt(file);
+    setReceiptPreview(URL.createObjectURL(file));
+    setErrorMsg("");
+  }
+
   async function handleSubmit() {
     const required: (keyof FormData)[] = [
       "lastName",
@@ -114,13 +155,24 @@ export default function JoinPage() {
         return;
       }
     }
+    if (!receipt) {
+      setErrorMsg("Гүйлгээний баримтын зургийг заавал оруулна уу.");
+      return;
+    }
+
     setStatus("loading");
     setErrorMsg("");
+
     try {
+      // 1. Upload receipt to Cloudinary
+      const receiptUrl = await uploadToCloudinary(receipt);
+
+      // 2. Submit form to API
       const formData = new FormData();
       Object.entries(form).forEach(([k, v]) => formData.append(k, v));
       if (photo) formData.append("photo", photo);
       if (cv) formData.append("cv", cv);
+      formData.append("receiptUrl", receiptUrl);
 
       const res = await fetch("/api/join", { method: "POST", body: formData });
       const data = await res.json();
@@ -442,6 +494,158 @@ export default function JoinPage() {
                 accept=".pdf,.doc,.docx"
                 className="hidden"
                 onChange={handleCv}
+              />
+            </section>
+
+            <hr className="border-slate-100" />
+
+            {/* Payment */}
+            <section>
+              <SectionTitle>Бүртгэлийн хураамж</SectionTitle>
+              <div className="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-100 rounded-2xl p-6 mb-5">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <p className="text-xs font-semibold text-teal-600 uppercase tracking-wider mb-1">
+                      Хураамжийн дүн
+                    </p>
+                    <p className="text-3xl font-bold text-slate-800">
+                      20,000
+                      <span className="text-lg text-slate-500 ml-1">₮</span>
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Нэг удаагийн бүртгэлийн хураамж
+                    </p>
+                  </div>
+                  <div className="bg-white border border-teal-100 rounded-xl px-5 py-4 shadow-sm min-w-[240px]">
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Шилжүүлэх данс
+                    </p>
+                    <div className="space-y-2">
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs text-slate-400 w-16 flex-shrink-0 pt-0.5">
+                          Банк
+                        </span>
+                        <span className="text-sm font-semibold text-slate-700">
+                          Төрийн банк
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs text-slate-400 w-16 flex-shrink-0 pt-0.5">
+                          Дансны №
+                        </span>
+                        <span className="text-sm font-mono font-bold text-teal-700 tracking-wide break-all">
+                          860034100901882633
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs text-slate-400 w-16 flex-shrink-0 pt-0.5">
+                          Эзэмшигч
+                        </span>
+                        <span className="text-xs font-medium text-slate-600 leading-snug">
+                          Монголын хүүхдийн гэмтэл согогийн унагалдай нийгэмлэг
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+                  <svg
+                    className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    Хураамж төлсний дараа гүйлгээний баримтын зургийг доор
+                    оруулна уу. Баримтгүйгээр өргөдлийг баталгаажуулах
+                    боломжгүй.
+                  </p>
+                </div>
+              </div>
+
+              {/* Receipt upload */}
+              <label className="block text-sm font-medium text-slate-600 mb-2">
+                Гүйлгээний баримт *
+              </label>
+              <div
+                onClick={() => receiptRef.current?.click()}
+                className={`border-2 border-dashed rounded-2xl cursor-pointer transition-colors overflow-hidden ${
+                  receipt
+                    ? "border-teal-300 bg-teal-50"
+                    : "border-slate-200 hover:border-teal-300 bg-slate-50"
+                }`}
+              >
+                {receiptPreview ? (
+                  <div className="relative group">
+                    <img
+                      src={receiptPreview}
+                      alt="Гүйлгээний баримт"
+                      className="w-full max-h-64 object-contain p-3"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+                      <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-lg">
+                        Солих
+                      </span>
+                    </div>
+                    <div className="border-t border-teal-100 px-4 py-2.5 bg-teal-50 flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-teal-600 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <p className="text-xs font-medium text-teal-700">
+                        {receipt!.name}
+                      </p>
+                      <p className="text-xs text-teal-500 ml-auto">
+                        {(receipt!.size / 1024).toFixed(0)} KB
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-8 text-center">
+                    <svg
+                      className="w-10 h-10 text-slate-300 mx-auto mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 8l-4-4-4 4M12 4v12"
+                      />
+                    </svg>
+                    <p className="text-sm font-medium text-slate-600 mb-1">
+                      Баримтын зураг оруулах
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      JPG, PNG · Дээд хэмжээ 5MB
+                    </p>
+                  </div>
+                )}
+              </div>
+              <input
+                ref={receiptRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleReceipt}
               />
             </section>
 
