@@ -509,7 +509,7 @@ export default function JoinPage() {
                       Хураамжийн дүн
                     </p>
                     <p className="text-3xl font-bold text-slate-800">
-                      20,000
+                      50,000
                       <span className="text-lg text-slate-500 ml-1">₮</span>
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
