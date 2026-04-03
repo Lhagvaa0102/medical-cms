@@ -56,7 +56,13 @@ export default function Footer() {
               Спонсор байгууллага
             </h3>
             <ul className="space-y-2">
-              {[{ label: "ГССҮТ", href: "" }].map((link) => (
+              {[
+                { label: "ГССҮТ", href: "https://www.gemtel.mn/" },
+                {
+                  label: "Rotary Clubs of Mongolia",
+                  href: "https://rotarymongolia.org/",
+                },
+              ].map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
